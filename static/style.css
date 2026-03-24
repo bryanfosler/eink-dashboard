@@ -1,0 +1,292 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Base ── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f0efeb;
+  color: #111;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 14px 20px 8px;
+  flex-shrink: 0;
+}
+.header-left { display: flex; align-items: baseline; gap: 8px; }
+.clock { font-size: 54px; font-weight: 200; letter-spacing: -2px; line-height: 1; }
+.ampm { font-size: 20px; font-weight: 300; color: #666; margin-bottom: 4px; }
+.date { font-size: 17px; font-weight: 300; color: #555; margin-left: 8px; margin-bottom: 4px; }
+
+/* ── Lock button ── */
+.lock-btn {
+  background: #e4e3dd;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+}
+.lock-btn.unlocked { background: #111; color: #fff; border-color: #111; }
+
+/* ── Grid ── */
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 8px;
+  padding: 0 12px 12px;
+  min-height: 0;
+  position: relative;
+}
+
+/* ── Default card positions ── */
+#card-tasks     { grid-column: 1 / 9;  grid-row: 1 / 11; }
+#card-calendar  { grid-column: 9 / 13; grid-row: 1 / 5;  }
+#card-weather   { grid-column: 9 / 13; grid-row: 5 / 8;  }
+#card-training  { grid-column: 9 / 13; grid-row: 8 / 11; }
+
+/* ── Card wrapper ── */
+.card-wrapper {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ── Card ── */
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 14px 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.card:hover { box-shadow: 0 3px 16px rgba(0,0,0,0.07); border-color: #bbb; }
+.unlocked-mode .card { cursor: grab; border-style: dashed; border-color: #bbb; }
+.unlocked-mode .card:active { cursor: grabbing; }
+
+/* ── Card header ── */
+.card-header { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.card-header h2 {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #999;
+}
+.card-count {
+  background: #111; color: #fff;
+  font-size: 10px; font-weight: 600;
+  border-radius: 10px; padding: 1px 7px;
+}
+.card-sub { font-size: 11px; color: #aaa; margin-left: auto; }
+.placeholder { color: #bbb; font-size: 14px; font-style: italic; }
+
+/* ── Tasks ── */
+.task-list { list-style: none; display: flex; flex-direction: column; overflow: hidden; flex: 1; }
+.task-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 2px; border-radius: 6px;
+  min-height: 0; flex-shrink: 0;
+}
+.task-item:hover { background: #f8f8f6; }
+.task-check {
+  background: none; border: 1.5px solid #ccc; border-radius: 50%;
+  width: 16px; height: 16px; min-width: 16px; cursor: pointer; font-size: 0; flex-shrink: 0;
+}
+.task-check:hover { border-color: #555; }
+.task-check.completing { border-color: #22c55e; background: #22c55e; }
+.task-text {
+  font-size: clamp(11px, 1.1vw, 14px);
+  line-height: 1.3; flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.task-file {
+  font-size: clamp(9px, 0.8vw, 11px); color: #ccc;
+  white-space: nowrap; flex-shrink: 0;
+}
+.task-empty { font-size: 12px; color: #bbb; font-style: italic; padding: 4px 2px; }
+
+/* ── Weather ── */
+.weather-main { display: flex; align-items: center; }
+.weather-main img { width: 44px; height: 44px; }
+.temp { font-size: 44px; font-weight: 200; line-height: 1; }
+.weather-detail { font-size: 13px; color: #666; }
+
+/* ── Training card ── */
+.training-today {
+  display: flex; align-items: baseline; gap: 10px; flex-shrink: 0;
+}
+.training-day-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #999;
+}
+.training-workout {
+  font-size: 18px; font-weight: 500; color: #111;
+}
+.training-week {
+  display: flex; gap: 4px; flex: 1; align-items: stretch; min-height: 0;
+}
+.training-day {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 3px; padding: 5px 2px;
+  border-radius: 8px; background: #f8f8f6; min-width: 0;
+}
+.training-day-today {
+  background: #111; color: #fff;
+}
+.training-day-today .td-label { color: #aaa; }
+.training-day-today .td-workout { color: #fff; }
+.td-label { font-size: 9px; font-weight: 600; text-transform: uppercase; color: #aaa; }
+.td-workout { font-size: 10px; text-align: center; line-height: 1.2; overflow: hidden; }
+.training-total { font-size: 11px; color: #aaa; flex-shrink: 0; }
+
+/* ── Strava recent ── */
+.strava-recent { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.strava-run {
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12px; padding: 3px 0;
+  border-top: 1px solid #f0f0f0;
+}
+.strava-miles { font-weight: 600; color: #111; }
+.strava-pace  { color: #666; }
+.strava-date  { color: #bbb; margin-left: auto; }
+
+/* ── Plan vs Actual ── */
+.pva-toggle {
+  display: flex; gap: 8px; margin-bottom: 20px;
+}
+.pva-btn {
+  background: #f0f0f0; border: 1px solid #ddd; border-radius: 8px;
+  padding: 6px 16px; font-size: 12px; font-weight: 500; color: #555; cursor: pointer;
+}
+.pva-btn.active { background: #111; color: #fff; border-color: #111; }
+
+.pva-week { margin-bottom: 20px; }
+.pva-week-label {
+  font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 6px; display: flex; gap: 8px; align-items: center;
+}
+.pva-phase { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.pva-totals { margin-left: auto; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.pva-days { display: flex; gap: 4px; }
+.pva-day {
+  flex: 1; border-radius: 8px; padding: 6px 4px;
+  display: flex; flex-direction: column; gap: 3px; min-width: 0;
+  background: #f8f8f6; border: 1px solid transparent;
+}
+.pva-day-label {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  color: #aaa; display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.pva-date { font-weight: 400; font-size: 8px; }
+.pva-planned { font-size: 10px; text-align: center; color: #555; line-height: 1.2; }
+.pva-actual  { font-size: 10px; text-align: center; color: #16a34a; font-weight: 600; line-height: 1.2; }
+.pva-missed  { font-size: 10px; text-align: center; color: #d1d5db; }
+
+.pva-hit    { background: #f0fdf4; border-color: #bbf7d0; }
+.pva-miss   { background: #fff7ed; border-color: #fed7aa; }
+.pva-rest   { background: #f8f8f6; }
+.pva-future { background: #f8f8f6; opacity: 0.5; }
+.pva-today  { border-color: #111 !important; background: #f0f0f0 !important; }
+
+/* ── Resize handle ── */
+.resize-handle {
+  position: absolute; bottom: 0; right: 0;
+  width: 20px; height: 20px;
+  cursor: se-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.resize-handle::after {
+  content: '';
+  position: absolute; bottom: 5px; right: 5px;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 0 0 10px 10px;
+  border-color: transparent transparent #aaa transparent;
+}
+.unlocked-mode .resize-handle { opacity: 1; }
+
+/* ── Drag ghost ── */
+.drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0.5;
+  border: 2px dashed #555;
+  border-radius: 14px;
+  background: #fff;
+  z-index: 500;
+}
+
+/* ── Drop target highlight ── */
+.drop-preview {
+  position: absolute;
+  background: rgba(0,0,0,0.06);
+  border: 2px dashed #999;
+  border-radius: 14px;
+  pointer-events: none;
+  z-index: 400;
+  transition: all 0.1s;
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35); z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #fff; border-radius: 18px;
+  width: min(700px, 92vw); max-height: 82vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative;
+}
+.modal-close {
+  position: absolute; top: 14px; right: 16px;
+  background: #f0f0f0; border: none; border-radius: 50%;
+  width: 28px; height: 28px; font-size: 13px; cursor: pointer; color: #555; z-index: 1;
+}
+.modal-close:hover { background: #e0e0e0; }
+.modal-content { padding: 24px; overflow-y: auto; flex: 1; }
+.modal-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 16px; }
+
+/* ── Modal tasks ── */
+.modal-task-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 8px; border-bottom: 1px solid #f0f0f0; border-radius: 8px;
+}
+.modal-task-item:hover { background: #fafafa; }
+.modal-task-item:last-child { border-bottom: none; }
+.modal-task-check {
+  background: none; border: 1.5px solid #ccc; border-radius: 50%;
+  width: 22px; height: 22px; min-width: 22px; cursor: pointer; font-size: 0; margin-top: 2px;
+}
+.modal-task-check:hover { border-color: #555; }
+.modal-task-check.completing { border-color: #22c55e; background: #22c55e; }
+.modal-task-body { flex: 1; }
+.modal-task-text { font-size: 15px; line-height: 1.5; color: #111; margin-bottom: 4px; }
+.modal-task-file { font-size: 11px; color: #aaa; }
+.modal-task-actions { display: flex; gap: 8px; align-items: center; }
+.btn-obsidian {
+  background: #7c3aed; color: #fff; border: none;
+  border-radius: 8px; padding: 6px 12px; font-size: 12px;
+  cursor: pointer; white-space: nowrap;
+}
+.btn-obsidian:hover { background: #6d28d9; }

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <meta http-equiv="refresh" content="{{ refresh_mins * 60 }}">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <span class="clock" id="clock">{{ now.strftime("%-I:%M") }}</span>
+      <span class="ampm" id="ampm">{{ now.strftime("%p") }}</span>
+      <span class="date">{{ now.strftime("%A, %B %-d") }}</span>
+    </div>
+    <div class="header-right">
+      <button class="lock-btn" id="lockBtn">⊞ Unlock</button>
+    </div>
+  </header>
+
+  <!-- Grid -->
+  <div class="grid" id="grid">
+
+    <div class="card-wrapper" id="card-tasks" data-card="tasks">
+      <div class="card" onclick="handleCardClick(event, 'tasks')">
+        <div class="card-header">
+          <h2>Tasks</h2>
+          <span class="card-count">{{ tasks|length }}</span>
+        </div>
+        <ul class="task-list">
+          {% for task in tasks %}
+          <li class="task-item" data-index="{{ loop.index0 }}">
+            <button class="task-check" data-index="{{ loop.index0 }}" onclick="completeTask(event, {{ loop.index0 }})"></button>
+            <span class="task-text">{{ task.text }}</span>
+            <span class="task-file">{{ task.file }}</span>
+          </li>
+          {% else %}
+          <li class="task-empty">No open tasks</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="resize-handle" data-card="tasks"></div>
+    </div>
+
+    <div class="card-wrapper" id="card-calendar" data-card="calendar">
+      <div class="card" onclick="handleCardClick(event, 'calendar')">
+        <div class="card-header"><h2>Today</h2></div>
+        <p class="placeholder">Outlook calendar coming soon</p>
+      </div>
+      <div class="resize-handle" data-card="calendar"></div>
+    </div>
+
+    <div class="card-wrapper" id="card-weather" data-card="weather">
+      <div class="card" onclick="handleCardClick(event, 'weather')">
+        <div class="card-header">
+          <h2>Weather</h2>
+          {% if weather.error is not defined %}<span class="card-sub">{{ weather.city }}</span>{% endif %}
+        </div>
+        {% if weather.error is defined %}
+          <p class="placeholder">{{ weather.error }}</p>
+        {% else %}
+          <div class="weather-main">
+            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}">
+            <span class="temp">{{ weather.temp }}°</span>
+          </div>
+          <div class="weather-detail">{{ weather.description }}</div>
+          <div class="weather-detail">Feels {{ weather.feels_like }}° · {{ weather.humidity }}% · {{ weather.wind }} mph</div>
+        {% endif %}
+      </div>
+      <div class="resize-handle" data-card="weather"></div>
+    </div>
+
+    <div class="card-wrapper" id="card-training" data-card="training">
+      <div class="card" onclick="handleCardClick(event, 'training')">
+        <div class="card-header">
+          <h2>Training</h2>
+          <span class="card-sub">Wk {{ training.week }} · {{ training.phase }} · {{ training.days_to_race }}d to {{ training.race_date }}</span>
+        </div>
+        {% if training.today_workout %}
+          <div class="training-today">
+            <span class="training-day-label">{{ training.today_label }}</span>
+            <span class="training-workout">{{ training.today_workout }}</span>
+          </div>
+          <div class="training-week">
+            {% for day in training.week_plan %}
+            <div class="training-day {% if day.today %}training-day-today{% endif %}">
+              <div class="td-label">{{ day.day[:2] }}</div>
+              <div class="td-workout">{{ day.workout }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="training-total">Target: {{ training.week_total }} mi this week</div>
+        {% else %}
+          <p class="placeholder">Plan not found</p>
+        {% endif %}
+        {% if strava.runs is defined and strava.runs %}
+          <div class="strava-recent">
+            {% for run in strava.runs[:2] %}
+            <div class="strava-run">
+              <span class="strava-miles">{{ run.miles }}mi</span>
+              <span class="strava-pace">{{ run.pace }}/mi</span>
+              <span class="strava-date">{{ run.date[5:] }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="resize-handle" data-card="training"></div>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const TASKS    = {{ tasks | tojson }};
+    const TRAINING = {{ training | tojson }};
+    const STRAVA   = {{ strava | tojson }};
+  </script>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>
